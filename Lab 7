@@ -1,0 +1,47 @@
+import pandas as pd
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load and prepare data
+data = pd.read_csv("https://raw.githubusercontent.com/mwaskom/seaborn-data/master/mpg.csv")
+data = data.dropna()
+X = data[['horsepower']].values
+y = data['mpg'].values
+
+# Create polynomial features (degree 2)
+poly = PolynomialFeatures(degree=2)
+X_poly = poly.fit_transform(X)
+
+# Split data into train/test sets
+X_train, X_test, y_train, y_test = train_test_split(X_poly, y, test_size=0.2, random_state=42)
+
+# Train model
+model = LinearRegression().fit(X_train, y_train)
+y_pred = model.predict(X_test)
+
+# Sort values for smooth curve plotting
+sorted_idx = np.argsort(X_test[:, 1])
+X_sorted = X_test[sorted_idx, 1]
+y_test_sorted = y_test[sorted_idx]
+y_pred_sorted = y_pred[sorted_idx]
+
+# Plot results
+plt.figure(figsize=(10, 6))
+plt.scatter(X_test[:, 1], y_test, color='blue', label='Actual', alpha=0.7)
+plt.scatter(X_test[:, 1], y_pred, color='red', label='Predicted', alpha=0.7)
+plt.plot(X_sorted, y_pred_sorted, color='red', linewidth=2, label='Regression Curve')
+plt.title("Polynomial Regression (Degree=2) - Horsepower vs MPG", pad=20)
+plt.xlabel("Horsepower")
+plt.ylabel("MPG")
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+# Print model performance
+print(f"Model Coefficients: {model.coef_[1:]}")
+print(f"Model Intercept: {model.intercept_}")
+print(f"R-squared Score: {model.score(X_test, y_test):.3f}")
