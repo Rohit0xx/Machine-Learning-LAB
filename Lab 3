@@ -1,0 +1,20 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+from sklearn.datasets import load_iris
+
+# Load the Iris dataset
+data = load_iris()
+X = data.data
+
+# Apply PCA to reduce to 2 components
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X)
+
+# Plot the PCA results
+plt.scatter(X_pca[:, 0], X_pca[:, 1], c=data.target, cmap='viridis')
+plt.title('PCA on Iris Dataset (4D → 2D)')
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.colorbar(label='Iris Class')
+plt.show()
