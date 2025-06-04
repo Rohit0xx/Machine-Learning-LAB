@@ -1,0 +1,37 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def lwr(x, X, y, tau):
+    """Locally Weighted Regression function"""
+    weights = np.exp(-((x - X) ** 2) / (2 * tau ** 2))
+    return np.sum(weights * y) / np.sum(weights)
+
+# Generate synthetic data
+np.random.seed(42)  # For reproducibility
+X = np.linspace(-3, 3, 100)
+y = np.sin(X) + 0.1 * np.random.randn(100)
+
+# Points to predict
+X_query = np.linspace(-3, 3, 300)
+
+# Create figure once outside the loop
+plt.figure(figsize=(10, 6))
+
+# Plot original data
+plt.scatter(X, y, color='gray', s=15, alpha=0.7, label='Noisy Data')
+
+# Try different bandwidth parameters
+for tau in [0.1, 0.3, 1.0]:
+    y_pred = [lwr(xi, X, y, tau) for xi in X_query]
+    plt.plot(X_query, y_pred, linewidth=2, label=f'τ = {tau}')
+
+# Add true function for reference
+plt.plot(X_query, np.sin(X_query), 'k--', linewidth=1.5, label='True Function (sin(x))')
+
+plt.title("Locally Weighted Regression with Different Bandwidths", pad=20)
+plt.xlabel('x values')
+plt.ylabel('y values')
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
