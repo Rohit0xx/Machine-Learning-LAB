@@ -1,0 +1,35 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.neighbors import KNeighborsClassifier
+
+# Generate random data
+np.random.seed(42)  # For reproducibility
+x = np.random.rand(100, 1)
+y = np.array(['Class1' if val <= 0.5 else 'Class2' for val in x[:50]])
+
+# Train and test for different k values
+for k in [1, 2, 3, 4, 5, 20, 30]:
+    # Create and fit KNN classifier
+    clf = KNeighborsClassifier(n_neighbors=k)
+    clf.fit(x[:50], y)
+    
+    # Make predictions
+    pred = clf.predict(x[50:])
+    
+    # Plot results
+    plt.figure(figsize=(8, 4))
+    plt.scatter(x[:50], [1]*50, 
+                c=['red' if l == 'Class1' else 'blue' for l in y], 
+                label='Train')
+    plt.scatter(x[50:], [0]*50, 
+                c=['red' if l == 'Class1' else 'blue' for l in pred], 
+                marker='x', label='Test')
+    
+    plt.yticks([0, 1], ['Test', 'Train'])
+    plt.xlabel("x in [0,1]")
+    plt.ylabel('Classification')
+    plt.title(f'KNN Classification (k = {k})')
+    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
